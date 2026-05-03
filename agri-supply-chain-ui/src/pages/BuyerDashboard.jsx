@@ -57,6 +57,7 @@ const BuyerDashboard = () => {
   const ordersPlaced = orders ? orders.length : 0;
   const delivered = orders ? orders.filter(o => o.Status === 'DELIVERED').length : 0;
   const pendingPayment = orders ? orders.filter(o => o.Status === 'PLACED').length : 0;
+  const totalSpent = orders ? orders.filter(o => o.Status !== 'CANCELLED').reduce((sum, o) => sum + (o.Quantity * o.PricePerKg), 0) : 0;
   
   let lastOrderDate = '---';
   if (orders && orders.length > 0) {
@@ -128,10 +129,10 @@ const BuyerDashboard = () => {
               </div>
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
-              <div className="bg-purple-100 p-3 rounded-full text-purple-700 text-xl">📅</div>
+              <div className="bg-purple-100 p-3 rounded-full text-purple-700 text-xl">💰</div>
               <div>
-                <p className="text-gray-500 text-xs uppercase font-semibold tracking-wider">Last Order</p>
-                <p className="text-lg mt-1 font-bold text-[#1a2e1a] leading-tight whitespace-nowrap">{lastOrderDate}</p>
+                <p className="text-gray-500 text-xs uppercase font-semibold tracking-wider">Total Spent</p>
+                <p className="text-[28px] font-bold text-[#1a2e1a] leading-tight">₹ {totalSpent.toFixed(2)}</p>
               </div>
             </div>
           </div>

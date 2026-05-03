@@ -20,7 +20,7 @@ def get_farmer_stats(farmer_id: int):
     total_revenue_query = """
         SELECT COALESCE(SUM(O.Quantity * C.PricePerKg), 0) AS total 
         FROM Orders O JOIN Crop C ON O.CropID=C.CropID 
-        WHERE C.FarmerID=%s
+        WHERE C.FarmerID=%s AND O.Status != 'CANCELLED'
     """
     total_revenue_res = execute_query(total_revenue_query, (farmer_id,))
     total_revenue = total_revenue_res[0]["total"] if total_revenue_res else 0

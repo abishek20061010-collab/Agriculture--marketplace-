@@ -33,7 +33,7 @@ def root():
 def startup_event():
     conn = get_connection()
     if conn and conn.is_connected():
-        print("✅ MySQL connected")
+        print("[SUCCESS] MySQL connected")
         conn.close()
     else:
-        print("❌ DB error: Could not connect to MySQL database.")
+        print("[ERROR] DB error: Could not connect to MySQL database.")

@@ -18,8 +18,8 @@ def get_farmer_revenue(farmer_id: int):
 def get_revenue_per_crop(farmer_id: int):
     query = """
         SELECT C.CropName,
-               COALESCE(SUM(O.Quantity * C.PricePerKg), 0) AS revenue,
-               COUNT(O.OrderID) AS order_count
+               COALESCE(SUM(CASE WHEN O.Status != 'CANCELLED' THEN O.Quantity * C.PricePerKg ELSE 0 END), 0) AS revenue,
+               COUNT(CASE WHEN O.Status != 'CANCELLED' THEN O.OrderID ELSE NULL END) AS order_count
         FROM Crop C LEFT JOIN Orders O ON C.CropID=O.CropID
         WHERE C.FarmerID=%s
         GROUP BY C.CropName ORDER BY revenue DESC

@@ -7,9 +7,9 @@ router = APIRouter()
 def get_all_buyers():
     query = """
         SELECT B.BuyerID, B.Name, B.Phone, B.City,
-               COUNT(O.OrderID) AS total_orders,
-               COALESCE(SUM(O.Quantity * C.PricePerKg), 0) AS total_spent,
-               MAX(O.OrderDate) AS last_order_date
+               COUNT(CASE WHEN O.Status != 'CANCELLED' THEN O.OrderID ELSE NULL END) AS total_orders,
+               COALESCE(SUM(CASE WHEN O.Status != 'CANCELLED' THEN O.Quantity * C.PricePerKg ELSE 0 END), 0) AS total_spent,
+               MAX(CASE WHEN O.Status != 'CANCELLED' THEN O.OrderDate ELSE NULL END) AS last_order_date
         FROM Buyer B
         LEFT JOIN Orders O ON B.BuyerID = O.BuyerID
         LEFT JOIN Crop C ON O.CropID = C.CropID
