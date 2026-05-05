@@ -4,7 +4,8 @@ import {
   getUnassignedTransport, 
   getAllTransport, 
   assignTransport, 
-  updateTransportStatus 
+  updateTransportStatus,
+  shipTransport
 } from '../../api/axiosClient';
 
 const AssignDriverTab = () => {
@@ -60,12 +61,22 @@ const AssignDriverTab = () => {
         VehicleNo: formData.VehicleNo,
         DriverName: formData.DriverName
       });
-      toast.success(`🚚 Driver assigned! Order #${orderId} is now SHIPPED`);
-      loadData(); // Re-fetch all data to refresh both lists
+      toast.success(`🚚 Driver assigned! Now mark as SHIPPED to start delivery.`);
+      loadData();
     } catch (err) {
       toast.error(err.response?.data?.detail || 'Failed to assign driver');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleShipOrder = async (transportId) => {
+    try {
+      await shipTransport(transportId);
+      toast.success('Order marked as SHIPPED!');
+      loadData();
+    } catch (err) {
+      toast.error('Failed to ship order');
     }
   };
 
@@ -197,13 +208,22 @@ const AssignDriverTab = () => {
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{t.VehicleNo}</td>
                     <td className="px-4 py-4 whitespace-nowrap text-center">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        t.TransportStatus === 'IN_TRANSIT' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'
+                        t.TransportStatus === 'ASSIGNED' ? 'bg-blue-100 text-blue-800' :
+                        t.TransportStatus === 'IN_TRANSIT' ? 'bg-orange-100 text-orange-800' : 
+                        'bg-green-100 text-green-800'
                       }`}>
                         {t.TransportStatus}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
-                      {t.TransportStatus === 'IN_TRANSIT' ? (
+                      {t.TransportStatus === 'ASSIGNED' ? (
+                        <button 
+                          onClick={() => handleShipOrder(t.TransportID)}
+                          className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded transition-colors text-xs font-bold shadow-sm"
+                        >
+                          🚢 Mark Shipped
+                        </button>
+                      ) : t.TransportStatus === 'IN_TRANSIT' ? (
                         <button 
                           onClick={() => handleMarkDelivered(t.TransportID)}
                           className="text-green-600 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded transition-colors text-xs font-bold border border-green-200"

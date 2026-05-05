@@ -1,6 +1,23 @@
 from pydantic import BaseModel
 from typing import Optional
 
+class FarmerCreate(BaseModel):
+    FarmerID: int
+    Name: str
+    Phone: str
+    Location: str
+
+class BuyerCreate(BaseModel):
+    BuyerID: int
+    Name: str
+    Phone: str
+    City: str
+
+class WarehouseCreate(BaseModel):
+    WarehouseID: int
+    Location: str
+    Capacity: Optional[int] = 5000
+
 class CropCreate(BaseModel):
     CropID: int
     CropName: str

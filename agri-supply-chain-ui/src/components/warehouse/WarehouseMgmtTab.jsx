@@ -6,7 +6,8 @@ import {
   updateWarehouseLocation, 
   updateWarehouseAllocation, 
   createWarehouseAllocation,
-  getAllCrops
+  getAllCrops,
+  addWarehouse
 } from '../../api/axiosClient';
 
 const WarehouseMgmtTab = ({ warehouseID }) => {
@@ -14,6 +15,14 @@ const WarehouseMgmtTab = ({ warehouseID }) => {
   const [allocations, setAllocations] = useState([]);
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Add Warehouse Form State
+  const [showAddWarehouse, setShowAddWarehouse] = useState(false);
+  const [warehouseFormData, setWarehouseFormData] = useState({
+    WarehouseID: '',
+    Location: '',
+    Capacity: '5000'
+  });
 
   // Edit Location State
   const [editingLocId, setEditingLocId] = useState(null);
@@ -97,6 +106,29 @@ const WarehouseMgmtTab = ({ warehouseID }) => {
     }
   };
 
+  const handleAddWarehouse = async (e) => {
+    e.preventDefault();
+    if (!warehouseFormData.WarehouseID || !warehouseFormData.Location) {
+      return toast.error('ID and Location are required');
+    }
+    setLoading(true);
+    try {
+      await addWarehouse({
+        WarehouseID: parseInt(warehouseFormData.WarehouseID),
+        Location: warehouseFormData.Location,
+        Capacity: parseInt(warehouseFormData.Capacity)
+      });
+      toast.success('Warehouse added successfully');
+      setWarehouseFormData({ WarehouseID: '', Location: '', Capacity: '5000' });
+      setShowAddWarehouse(false);
+      loadData();
+    } catch (err) {
+      toast.error('Failed to add warehouse');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getUsedCapacity = (wId) => {
     return allocations
       .filter(a => a.WarehouseID === wId)
@@ -111,7 +143,66 @@ const WarehouseMgmtTab = ({ warehouseID }) => {
     <div className="space-y-10">
       {/* SECTION 1: WAREHOUSE LOCATIONS */}
       <section>
-        <h3 className="text-xl font-bold text-gray-800 mb-4">🏭 Warehouse Locations</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold text-gray-800">🏭 Warehouse Locations</h3>
+          <button 
+            onClick={() => setShowAddWarehouse(!showAddWarehouse)}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-sm flex items-center gap-2"
+          >
+            {showAddWarehouse ? '❌ Cancel' : '➕ Add Warehouse'}
+          </button>
+        </div>
+
+        {showAddWarehouse && (
+          <div className="bg-purple-50 rounded-xl p-5 mb-6 border border-purple-100 shadow-inner">
+            <h4 className="font-semibold text-purple-800 mb-3 text-sm uppercase tracking-wider">New Warehouse Details</h4>
+            <form onSubmit={handleAddWarehouse} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Warehouse ID</label>
+                <input 
+                  type="number" 
+                  required
+                  value={warehouseFormData.WarehouseID}
+                  onChange={e => setWarehouseFormData({...warehouseFormData, WarehouseID: e.target.value})}
+                  placeholder="e.g., 103"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Location Name</label>
+                <input 
+                  type="text" 
+                  required
+                  value={warehouseFormData.Location}
+                  onChange={e => setWarehouseFormData({...warehouseFormData, Location: e.target.value})}
+                  placeholder="e.g., Coimbatore"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Capacity (kg)</label>
+                <input 
+                  type="number" 
+                  required
+                  value={warehouseFormData.Capacity}
+                  onChange={e => setWarehouseFormData({...warehouseFormData, Capacity: e.target.value})}
+                  placeholder="e.g., 5000"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-70 shadow-md"
+                >
+                  Create Warehouse
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {warehouses.map(w => {
             const used = getUsedCapacity(w.WarehouseID);

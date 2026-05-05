@@ -7,6 +7,7 @@ import OrdersMgmtTab from '../components/warehouse/OrdersMgmtTab';
 import AssignDriverTab from '../components/warehouse/AssignDriverTab';
 import BuyersTab from '../components/warehouse/BuyersTab';
 import AnalyticsTab from '../components/warehouse/AnalyticsTab';
+import FarmersTab from '../components/warehouse/FarmersTab';
 
 const WarehouseDashboard = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const WarehouseDashboard = () => {
   const tabs = [
     { id: 'Crops', label: '🌱 Crops' },
     { id: 'Warehouse', label: '🏭 Warehouse' },
+    { id: 'Farmers', label: '🧑‍🌾 Farmers' },
     { id: 'Orders', label: '📦 Orders' },
     { id: 'Assign Driver', label: '🚚 Assign Driver' },
     { id: 'Buyers', label: '👥 Buyers' },
@@ -94,12 +96,11 @@ const WarehouseDashboard = () => {
         </div>
 
         {/* STATS ROW */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <StatCard icon="📦" label="Total Crops Listed" value={stats.total_crops} />
           <StatCard icon="🧑‍🌾" label="Active Farmers" value={stats.total_farmers} />
           <StatCard icon="🛒" label="Total Orders" value={stats.total_orders} />
           <StatCard icon="⏳" label="Pending Orders" value={stats.pending_orders} />
-          <StatCard icon="💰" label="Total Revenue" value={`₹${stats.total_revenue.toLocaleString()}`} />
           <StatCard icon="🚚" label="Active Deliveries" value={stats.active_deliveries} />
         </div>
 
@@ -144,6 +145,7 @@ const TabContent = ({ activeTab, warehouseID }) => {
   switch(activeTab) {
     case 'Crops': return <CropsTab warehouseID={warehouseID} />;
     case 'Warehouse': return <WarehouseMgmtTab warehouseID={warehouseID} />;
+    case 'Farmers': return <FarmersTab />;
     case 'Orders': return <OrdersMgmtTab warehouseID={warehouseID} />;
     case 'Assign Driver': return <AssignDriverTab warehouseID={warehouseID} />;
     case 'Buyers': return <BuyersTab warehouseID={warehouseID} />;

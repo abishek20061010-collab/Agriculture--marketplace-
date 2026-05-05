@@ -90,7 +90,7 @@ const CropsTab = ({ warehouseID }) => {
       toast.success('Crop removed successfully!');
       loadData();
     } catch (err) {
-      toast.error('Failed to delete crop');
+      toast.error(err.response?.data?.detail || 'Failed to delete crop');
     }
   };
 

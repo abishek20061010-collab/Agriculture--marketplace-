@@ -18,9 +18,12 @@ export const deleteCrop         = (id) => api.delete(`/crop/${id}`);
 
 /* FARMER */
 export const getAllFarmers      = () => api.get("/farmer/all");
+export const addFarmer          = (data) => api.post("/farmer/add", data);
+export const getFarmerDetails   = () => api.get("/farmer/details");
 
 /* BUYER */
 export const getAllBuyers       = () => api.get("/buyer/all");
+export const addBuyer           = (data) => api.post("/buyer/add", data);
 
 /* ORDERS */
 export const getBuyerOrders     = (id) => api.get(`/orders/buyer/${id}`);
@@ -39,10 +42,12 @@ export const getDeliveryTracking    = (id) => api.get(`/transport/buyer/${id}`);
 export const getUnassignedTransport = () => api.get("/transport/unassigned");
 export const assignTransport        = (data) => api.post("/transport/assign", data);
 export const getAllTransport        = () => api.get("/transport/all");
+export const shipTransport        = (id) => api.put(`/transport/${id}/ship`);
 export const updateTransportStatus  = (id, status) => api.put(`/transport/${id}/status`, { status });
 
 /* WAREHOUSE */
 export const getAllWarehouses   = () => api.get("/warehouse/all");
+export const addWarehouse       = (data) => api.post("/warehouse/add", data);
 export const getFarmerWarehouse = (id) => api.get(`/warehouse/farmer/${id}`);
 export const getWarehouseStats  = () => api.get("/warehouse/stats");
 export const getWarehouseAnalytics = () => api.get("/warehouse/analytics");

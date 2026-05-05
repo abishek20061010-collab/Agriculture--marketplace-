@@ -1,8 +1,14 @@
 from fastapi import APIRouter
 from database import execute_query
-from schemas import AllocationCreate, LocationUpdate
+from schemas import AllocationCreate, LocationUpdate, WarehouseCreate
 
 router = APIRouter()
+
+@router.post("/add")
+def add_warehouse(warehouse: WarehouseCreate):
+    query = "INSERT INTO Warehouse (WarehouseID, Location, Capacity) VALUES (%s, %s, %s)"
+    execute_query(query, (warehouse.WarehouseID, warehouse.Location, warehouse.Capacity), fetch=False)
+    return {"message": "Warehouse created successfully", "WarehouseID": warehouse.WarehouseID}
 
 @router.get("/all")
 def get_all_warehouses():
@@ -65,7 +71,6 @@ def get_warehouse_stats():
     total_farmers = execute_query("SELECT COUNT(DISTINCT FarmerID) AS count FROM Crop")[0]['count']
     total_orders = execute_query("SELECT COUNT(*) AS count FROM Orders")[0]['count']
     pending_orders = execute_query("SELECT COUNT(*) AS count FROM Orders WHERE Status = 'PLACED'")[0]['count']
-    total_rev = execute_query("SELECT COALESCE(SUM(Amount), 0) AS total FROM Payment WHERE Status = 'SUCCESS'")[0]['total']
     active_deliveries = execute_query("SELECT COUNT(*) AS count FROM Transport WHERE Status = 'IN_TRANSIT'")[0]['count']
     
     return {
@@ -73,7 +78,6 @@ def get_warehouse_stats():
         "total_farmers": total_farmers,
         "total_orders": total_orders,
         "pending_orders": pending_orders,
-        "total_revenue": total_rev,
         "active_deliveries": active_deliveries
     }
 

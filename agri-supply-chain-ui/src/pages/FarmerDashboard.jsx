@@ -42,10 +42,17 @@ const FarmerDashboard = () => {
   }, []);
 
   // Use the combined stats endpoint from Phase 1B instead of firing 4 separate endpoints
-  const { data: stats, loading, error } = useApi(
+  const { data: stats, loading, error, refetch } = useApi(
     () => user ? getFarmerStats(user.id) : Promise.resolve({ data: null }), 
     [user]
   );
+
+  // Refetch stats whenever the user switches tabs to ensure the top metrics stay in sync
+  useEffect(() => {
+    if (user && refetch) {
+      refetch();
+    }
+  }, [activeTab]);
 
   if (!user) return null;
 

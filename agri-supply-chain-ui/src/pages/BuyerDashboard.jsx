@@ -40,10 +40,17 @@ const BuyerDashboard = () => {
   }, []);
 
   // Using getBuyerOrders to compute the stats requested in Phase 4A
-  const { data: orders, loading, error } = useApi(
+  const { data: orders, loading, error, refetch } = useApi(
     () => user ? getBuyerOrders(user.id) : Promise.resolve({ data: [] }), 
     [user]
   );
+
+  // Refetch orders whenever the user switches tabs to ensure the top metrics stay in sync
+  useEffect(() => {
+    if (user && refetch) {
+      refetch();
+    }
+  }, [activeTab]);
 
   if (!user) return null;
 
