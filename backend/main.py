@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import get_connection
+import firebase  # Initialize Firebase on startup
 from routes import crop, orders, payment, transport, warehouse, revenue, stats, farmer, buyer
 
 app = FastAPI()
